@@ -2,14 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Generated Interview Persona</title>
+  <title>Your Interview Persona - QuickPitch.AI</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1, h2, p {
+      color: #ffffff;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    button {
+      background-color: #00bcd4;
+      color: #ffffff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0097a7;
+    }
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+    }
+    .footer a {
+      color: #777;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+  </style>
 </head>
-<body style="background-color: black; color: white; padding: 20px;">
-  <div id="personaContent">
-    <!-- Content will load here -->
+<body>
+
+  <h1>Your Generated Interview Persona</h1>
+
+  <div class="section">
+    <h2>Role:</h2>
+    <p id="roleOutput"></p>
   </div>
 
-  <script src="persona.js"></script> <!-- We will create this script next -->
+  <div class="section">
+    <h2>Tone and Style:</h2>
+    <p id="toneOutput"></p>
+  </div>
+
+  <div class="section">
+    <h2>Resume Overview:</h2>
+    <p id="resumeOutput"></p>
+  </div>
+
+  <div class="section">
+    <h2>Job Description Focus:</h2>
+    <p id="jobDescriptionOutput"></p>
+  </div>
+
+  <button onclick="clearData()">Start Over</button>
+
+  <div class="footer">
+    <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+  </div>
+
+  <script>
+    // Load interview data from localStorage
+    const interviewData = JSON.parse(localStorage.getItem('interviewData'));
+
+    if (interviewData) {
+      document.getElementById('roleOutput').textContent = interviewData.role;
+      document.getElementById('toneOutput').textContent = interviewData.tone.join(', ');
+      document.getElementById('resumeOutput').textContent = interviewData.resume;
+      document.getElementById('jobDescriptionOutput').textContent = interviewData.jobDescription;
+    }
+
+    // Clear localStorage if user wants to start over
+    function clearData() {
+      localStorage.removeItem('interviewData');
+      window.location.href = "index.html";
+    }
+  </script>
+
 </body>
 </html>
