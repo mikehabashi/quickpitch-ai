@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Conversational Mock Interview</title>
+  <style>
+    body {
+      margin: 50px;
+      font-family: Arial, sans-serif;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    #chat div {
+      margin-bottom: 15px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 10px;
+    }
+    input {
+      width: 70%;
+      margin-right: 10px;
+    }
+    button {
+      background-color: #0070f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Conversational Mock Interview</h2>
+  <div id="chat">
+    <div><strong>AI:</strong> Hi! Tell me a little about yourself.</div>
+  </div>
+
+  <input type="text" id="userInput" placeholder="Type your answer...">
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('userInput');
+    const questions = [
+      "Why are you excited about this PwC opportunity?",
+      "Can you describe a challenge you recently overcame?"
+    ];
+    let index = 0;
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+      
+      const userDiv = document.createElement('div');
+      userDiv.innerHTML = `<strong>You:</strong> ${text}`;
+      chat.appendChild(userDiv);
+
+      input.value = '';
+
+      if (index < questions.length) {
+        const aiDiv = document.createElement('div');
+        aiDiv.innerHTML = `<strong>AI:</strong> ${questions[index]}`;
+        chat.appendChild(aiDiv);
+        index++;
+      } else {
+        const aiDiv = document.createElement('div');
+        aiDiv.innerHTML = `<strong>AI:</strong> Great conversation! You're ready!`;
+        chat.appendChild(aiDiv);
+      }
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+
+
+</body>
+</html>
