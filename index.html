@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>QuickPitch.AI Interview Assistant</title>
   <style>
+    /* Same CSS styles as before */
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #121212; /* Black background */
-      color: #ffffff; /* White text for contrast */
+      background-color: #121212;
+      color: #ffffff;
       margin: 0;
       padding: 0;
       display: flex;
@@ -17,12 +18,12 @@
       justify-content: center;
       height: 100vh;
       text-align: center;
-      overflow-y: auto; /* To avoid scroll overflow */
+      overflow-y: auto;
     }
 
     h1 {
       font-size: 2.5em;
-      color: #ffcc00; /* Gold color for the main header */
+      color: #ffcc00;
       margin-bottom: 30px;
     }
 
@@ -32,8 +33,8 @@
     }
 
     button {
-      background-color: #ffcc00; /* Gold button */
-      color: #121212; /* Dark text for button */
+      background-color: #ffcc00;
+      color: #121212;
       border: none;
       padding: 10px 20px;
       font-size: 1em;
@@ -44,8 +45,8 @@
     }
 
     button:hover {
-      background-color: #e6b800; /* Slightly darker yellow on hover */
-      transform: scale(1.05); /* Slight button scale effect */
+      background-color: #e6b800;
+      transform: scale(1.05);
     }
 
     input[type="file"] {
@@ -198,32 +199,25 @@
       document.getElementById('selected-tone').innerText = "Selected Tone(s): " + (selectedTone.length ? selectedTone.join(', ') : "None");
     }
 
-    // Function to generate Interview Persona
+    // Function to generate Interview Persona and navigate to persona page
     function generatePersona() {
       if (!selectedRole || selectedTone.length === 0) {
         alert("Please select a role and at least one tone before generating the persona!");
         return;
       }
 
-      const formData = new FormData();
-      if (resumeFile) formData.append('resume', resumeFile);
-      if (jobDescriptionFile) formData.append('job_description', jobDescriptionFile);
-
-      formData.append('role', selectedRole);
-      formData.append('tone', selectedTone.join(', '));
-
-      alert("Generating Interview Persona with the selected role and tone(s)...");
-
-      // Here you can implement the integration with QuickPitch.AI or another service
-      // to send this data and customize the interview persona. For now, it just prints to console.
-      console.log("Persona Generated:", {
+      const personaData = {
         role: selectedRole,
         tone: selectedTone.join(', '),
         resume: resumeFile ? resumeFile.name : "Not Uploaded",
         job_description: jobDescriptionFile ? jobDescriptionFile.name : "Not Uploaded"
-      });
+      };
 
-      // Add any further API call or behavior as needed for your system
+      // Save persona data to localStorage
+      localStorage.setItem('personaData', JSON.stringify(personaData));
+
+      // Redirect to persona page
+      window.location.href = 'persona.html';
     }
 
     // Handle file uploads
