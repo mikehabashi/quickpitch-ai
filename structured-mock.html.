@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Structured Mock Interview</title>
+  <style>
+    body {
+      text-align: center;
+      margin: 50px;
+      font-family: Arial, sans-serif;
+    }
+    #question {
+      font-size: 22px;
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #0070f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Structured Mock Interview</h2>
+  <div id="question">Loading question...</div>
+  <button onclick="nextQuestion()">Next Question</button>
+
+  <script>
+    const questions = [
+      "Tell me about yourself.",
+      "Why do you want to work at PwC?",
+      "Describe a time you solved a difficult problem.",
+      "How do you prioritize tasks under pressure?",
+      "Where do you see yourself in 5 years?"
+    ];
+    let current = 0;
+
+    function showQuestion() {
+      document.getElementById('question').innerText = questions[current];
+    }
+
+    function nextQuestion() {
+      if (current < questions.length - 1) {
+        current++;
+        showQuestion();
+      } else {
+        document.getElementById('question').innerText = "End of interview practice! Well done!";
+      }
+    }
+
+    window.onload = showQuestion;
+  </script>
+
+</body>
+</html>
