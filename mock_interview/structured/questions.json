@@ -1,0 +1,22 @@
+[
+    {
+        "question": "Tell me about yourself.",
+        "type": "open-ended"
+    },
+    {
+        "question": "Describe a time you led a cross-functional team to success.",
+        "type": "open-ended"
+    },
+    {
+        "question": "How would you approach building an Adobe alliance at PwC?",
+        "type": "open-ended"
+    },
+    {
+        "question": "How do you handle conflicts in a strategic partnership?",
+        "type": "open-ended"
+    },
+    {
+        "question": "Describe a time you exceeded your sales targets.",
+        "type": "open-ended"
+    }
+]
