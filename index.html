@@ -35,3 +35,98 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuickPitch.AI Interview Assistant</title>
+</head>
+<body>
+  <h1>Welcome to Your Interview Assistant</h1>
+
+  <!-- Role Selection -->
+  <h3>Select the role you're interviewing for:</h3>
+  <button onclick="setRole('Alliances/Partnership Role')">Alliances/Partnership Role</button>
+  <button onclick="setRole('Sales Executive')">Sales Executive</button>
+  <button onclick="setRole('Marketing')">Marketing</button>
+  <p id="selected-role">Selected Role: None</p>
+
+  <!-- Upload Resume and Job Description -->
+  <h3>Upload Your Resume and Job Description</h3>
+  <input type="file" id="resume-file" accept=".pdf, .docx, .txt">
+  <input type="file" id="job-description-file" accept=".pdf, .docx, .txt">
+  <br><br>
+
+  <!-- Tone & Format Selection -->
+  <h3>Select Interview Tone and Style:</h3>
+  <button onclick="setTone('Professional & Sharp')">Professional & Sharp</button>
+  <button onclick="setTone('Friendly & Conversational')">Friendly & Conversational</button>
+  <button onclick="setTone('Authoritative & Confident')">Authoritative & Confident</button>
+  <button onclick="setTone('Humble & Collaborative')">Humble & Collaborative</button>
+  <button onclick="setTone('Humanized, not robotic')">Humanized, not robotic</button>
+  <button onclick="setTone('Industry Expert (Alliance Management)')">Industry Expert (Alliance Management)</button>
+  <button onclick="setTone('Subtle, smart humor')">Subtle, smart humor</button>
+  <p id="selected-tone">Selected Tone: None</p>
+
+  <!-- Generate Interview Persona Button -->
+  <h3>Generate Interview Persona:</h3>
+  <button onclick="generatePersona()">Generate Persona</button>
+
+  <script>
+    let selectedRole = "";
+    let selectedTone = "";
+    let resumeFile = null;
+    let jobDescriptionFile = null;
+
+    // Function to set the selected role
+    function setRole(role) {
+      selectedRole = role;
+      document.getElementById('selected-role').innerText = "Selected Role: " + role;
+    }
+
+    // Function to set the selected tone
+    function setTone(tone) {
+      selectedTone = tone;
+      document.getElementById('selected-tone').innerText = "Selected Tone: " + tone;
+    }
+
+    // Function to generate Interview Persona
+    function generatePersona() {
+      if (!selectedRole || !selectedTone) {
+        alert("Please select a role and tone before generating the persona!");
+        return;
+      }
+
+      const formData = new FormData();
+      if (resumeFile) formData.append('resume', resumeFile);
+      if (jobDescriptionFile) formData.append('job_description', jobDescriptionFile);
+
+      formData.append('role', selectedRole);
+      formData.append('tone', selectedTone);
+
+      alert("Generating Interview Persona with the selected role and tone...");
+
+      // Here you can implement the integration with QuickPitch.AI or another service
+      // to send this data and customize the interview persona. For now, it just prints to console.
+      console.log("Persona Generated:", {
+        role: selectedRole,
+        tone: selectedTone,
+        resume: resumeFile ? resumeFile.name : "Not Uploaded",
+        job_description: jobDescriptionFile ? jobDescriptionFile.name : "Not Uploaded"
+      });
+      
+      // Add any further API call or behavior as needed for your system
+    }
+
+    // Handle file uploads
+    document.getElementById('resume-file').addEventListener('change', function(event) {
+      resumeFile = event.target.files[0];
+    });
+
+    document.getElementById('job-description-file').addEventListener('change', function(event) {
+      jobDescriptionFile = event.target.files[0];
+    });
+  </script>
+</body>
+</html>
