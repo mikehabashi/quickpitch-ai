@@ -17,6 +17,7 @@
       justify-content: center;
       height: 100vh;
       text-align: center;
+      overflow-y: auto; /* To avoid scroll overflow */
     }
 
     h1 {
@@ -108,12 +109,20 @@
     }
 
     footer {
-      position: absolute;
-      bottom: 20px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
       font-size: 1em;
       color: #aaaaaa;
+      background-color: #121212;
+      padding: 10px 0;
+      text-align: center;
     }
 
+    footer a {
+      color: #ffcc00;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -161,11 +170,11 @@
 
     <!-- Generate Interview Persona Button -->
     <button class="generate-btn" onclick="generatePersona()">Generate Interview Persona</button>
-
-    <footer>
-      <p>Powered by QuickPitch.AI | <a href="#" style="color: #ffcc00;">Privacy Policy</a> | <a href="#" style="color: #ffcc00;">Terms of Service</a></p>
-    </footer>
   </div>
+
+  <footer>
+    <p>Powered by QuickPitch.AI | <a href="#" style="color: #ffcc00;">Privacy Policy</a> | <a href="#" style="color: #ffcc00;">Terms of Service</a></p>
+  </footer>
 
   <script>
     let selectedRole = "";
