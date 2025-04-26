@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QuickPitch.AI Interview Assistant</title>
-  <style>
-    /* Same CSS styles as before */
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+
       justify-content: center;
       height: 100vh;
       text-align: center;
@@ -68,7 +52,110 @@
       margin-top: 20px;
       padding-left: 20px;
     }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QuickPitch.AI</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1, h2, label {
+      color: #ffffff;
+    }
+    select, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00bcd4;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0097a7;
+    }
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+    }
+    .footer a {
+      color: #777;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
 
+  <h1>QuickPitch.AI Interview Assistant</h1>
+
+  <h2>Select the Role You're Interviewing For:</h2>
+  <select id="roleSelect">
+    <option value="Alliances/Partnership Role">Alliances/Partnership Role</option>
+    <option value="Sales Executive">Sales Executive</option>
+    <option value="Marketing Role">Marketing Role</option>
+  </select>
+
+  <h2>Upload Resume:</h2>
+  <textarea id="resumeInput" placeholder="Paste your resume here..."></textarea>
+
+  <h2>Upload Job Description:</h2>
+  <textarea id="jobDescriptionInput" placeholder="Paste the job description here..."></textarea>
+
+  <h2>Select Interview Tone and Style (Multiple):</h2>
+  <select id="toneSelect" multiple>
+    <option value="Professional & Sharp">Professional & Sharp</option>
+    <option value="Friendly & Conversational">Friendly & Conversational</option>
+    <option value="Authoritative & Confident">Authoritative & Confident</option>
+    <option value="Humble & Collaborative">Humble & Collaborative</option>
+    <option value="Humanized, not robotic">Humanized, not robotic</option>
+    <option value="Industry Expert">Industry Expert (Alliances, Growth Strategy, Scaling Partnerships)</option>
+    <option value="Subtle, Smart Humor">Subtle, Smart Humor</option>
+  </select>
+
+  <button id="generateButton">Generate Interview Persona</button>
+
+  <div class="footer">
+    <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+  </div>
+
+  <script>
+    // Save data to localStorage and move to persona.html
+    document.getElementById("generateButton").addEventListener("click", function() {
+      const role = document.getElementById("roleSelect").value;
+      const toneOptions = document.getElementById("toneSelect");
+      const selectedTones = Array.from(toneOptions.selectedOptions).map(option => option.value);
+      const resume = document.getElementById("resumeInput").value;
+      const jobDescription = document.getElementById("jobDescriptionInput").value;
+
+      const interviewData = {
+        role: role,
+        tone: selectedTones,
+        resume: resume,
+        jobDescription: jobDescription
+      };
+
+      localStorage.setItem('interviewData', JSON.stringify(interviewData));
+
+      window.location.href = "persona.html";
+    });
+  </script>
+
+</body>
+</html>
     .checkbox-group label {
       font-size: 1em;
       display: block;
