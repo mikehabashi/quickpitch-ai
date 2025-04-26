@@ -3,47 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generated Interview Persona</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Your Generated Interview Persona</title>
 </head>
-<body style="background-color: #111; color: white;">
-
-  <div class="container">
-    <h1>Your Generated Interview Persona</h1>
-
-    <!-- Display Role -->
-    <p><strong>Role:</strong> <span id="persona-role"></span></p>
-
-    <!-- Display Tone -->
-    <p><strong>Tone:</strong> <span id="persona-tone"></span></p>
-
-    <!-- Display Resume -->
-    <p><strong>Resume:</strong> <span id="persona-resume"></span></p>
-
-    <!-- Display Job Description -->
-    <p><strong>Job Description:</strong> <span id="persona-job-description"></span></p>
-
-    <!-- Button to clear data -->
-    <button onclick="clearData()">Clear Data</button>
+<body style="background-color: black; color: white; padding: 20px;">
+  <div id="personaContent">
+    <!-- Content will load here -->
   </div>
 
-  <script>
-    // Retrieve persona data from localStorage
-    const storedPersonaData = localStorage.getItem('personaData');
-    const personaData = storedPersonaData ? JSON.parse(storedPersonaData) : {};
-
-    // Display the data on the page
-    document.getElementById('persona-role').innerText = personaData.role || "Not Available";
-    document.getElementById('persona-tone').innerText = personaData.tone.join(', ') || "Not Available";
-    document.getElementById('persona-resume').innerText = personaData.resume || "Not Available";
-    document.getElementById('persona-job-description').innerText = personaData.job_description || "Not Available";
-
-    // Function to clear the stored data
-    function clearData() {
-      localStorage.removeItem('personaData');
-      window.location.href = 'index.html';  // Redirect back to the main page
-    }
-  </script>
-
+  <script src="persona.js"></script> <!-- We will create this script next -->
 </body>
 </html>
