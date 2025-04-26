@@ -1,0 +1,35 @@
+window.onload = function() {
+  let storedData = JSON.parse(localStorage.getItem('interviewData'));
+
+  if (!storedData) {
+    document.getElementById('personaContent').innerHTML = '<p>No interview data found. Please go back and fill the form.</p>';
+    return;
+  }
+
+  const personaContent = document.getElementById("personaContent");
+
+  let personaHTML = `
+    <h1>🎯 Your Generated Interview Persona</h1>
+    <p><strong>Role:</strong> ${storedData.role}</p>
+    <p><strong>Tone:</strong> ${storedData.tone.join(", ")}</p>
+    <p><strong>Resume:</strong> ${storedData.resume}</p>
+    <p><strong>Job Description:</strong> ${storedData.jobDescription}</p>
+    <hr>
+    <h2>Crush Your Interview Strategy:</h2>
+    <ul>
+      <li><strong>Mindset:</strong> Be ${storedData.tone.join(", ")} throughout the interview.</li>
+      <li><strong>Focus:</strong> Show how you perfectly match the ${storedData.role} role needs.</li>
+      <li><strong>Tips:</strong> Bring clear examples, results, and stories based on your resume and job description.</li>
+      <li><strong>Bonus:</strong> Smile, breathe, and show them you're their best hire!</li>
+    </ul>
+    <br>
+    <button onclick="clearData()">Clear & Restart</button>
+  `;
+
+  personaContent.innerHTML = personaHTML;
+};
+
+function clearData() {
+  localStorage.removeItem('interviewData');
+  window.location.href = 'index.html'; // send back to homepage
+}
