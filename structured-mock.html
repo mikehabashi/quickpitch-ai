@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Structured Mock Interview</title>
+</head>
+<body>
+  <h1>Structured Mock Interview Mode</h1>
+  <p>Get ready for your structured practice session!</p>
+
+  <div id="question-container">
+    <h2>Question 1:</h2>
+    <p>Tell me about yourself.</p>
+
+    <textarea id="answer" placeholder="Type your answer here..." rows="6" cols="50"></textarea><br><br>
+
+    <button onclick="nextQuestion()">Next Question</button>
+  </div>
+
+  <script>
+    const questions = [
+      "Tell me about yourself.",
+      "Why do you want to work at PwC?",
+      "Describe a time you had to solve a challenging problem.",
+      "What are your strengths and weaknesses?",
+      "Where do you see yourself in five years?"
+    ];
+
+    let current = 0;
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        document.querySelector('h2').innerText = `Question ${current + 1}:`;
+        document.querySelector('p').innerText = questions[current];
+        document.getElementById('answer').value = "";
+      } else {
+        document.getElementById('question-container').innerHTML = "<h2>Mock Interview Complete!</h2><p>Well done!</p>";
+      }
+    }
+  </script>
+</body>
+</html>
