@@ -1,72 +1,93 @@
-<!-- Live Suggestions Area -->
-<section id="live-suggestions" style="background-color: #111; color: #fff; padding: 20px; margin-top: 30px; border-radius: 10px;">
-  <h2>Live Suggestions (Quiet Mode)</h2>
-  <div id="suggestions" style="margin-top: 15px;">
-    <p>Listening for interviewer questions... Suggestions will appear here quietly.</p>
-  </div>
-</section>
+// Wait for the document to load
+document.addEventListener('DOMContentLoaded', function () {
+    const generateButton = document.getElementById('generateButton');
+    const roleSelection = document.getElementById('roleSelection');
+    const interviewInstructions = document.getElementById('interviewInstructions');
+    const resumeUpload = document.getElementById('resumeUpload');
+    const jobDescriptionLink = document.getElementById('jobDescriptionLink');
+    const personaSection = document.getElementById('generatedPersona');
+    const personaRole = document.getElementById('personaRole');
+    const personaTone = document.getElementById('personaTone');
+    const personaResume = document.getElementById('personaResume');
+    const personaJobDescription = document.getElementById('personaJobDescription');
+    const transcriptContent = document.getElementById('transcriptContent');
+    const liveTranscriptControls = document.getElementById('liveTranscriptControls');
 
-<!-- Microphone Listening Script -->
-<script>
-  // Check browser compatibility
-  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let fullTranscript = "";
 
-  if (window.SpeechRecognition) {
-    const recognition = new window.SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    // Generate persona button click handler
+    generateButton.addEventListener('click', function () {
+        // Display persona based on selections
+        personaRole.textContent = `Role: ${roleSelection.value}`;
+        personaTone.textContent = `Tone: ${getSelectedTone()}`;
+        personaResume.textContent = `Resume: ${resumeUpload.files[0] ? resumeUpload.files[0].name : 'No resume uploaded'}`;
+        personaJobDescription.textContent = `Job Description: ${jobDescriptionLink.value}`;
 
-    recognition.start();
+        personaSection.classList.remove('hidden');
+        liveTranscriptControls.classList.remove('hidden');
+    });
 
-    recognition.onresult = function(event) {
-      const lastResultIndex = event.results.length - 1;
-      const transcript = event.results[lastResultIndex][0].transcript.trim();
-
-      console.log('Heard:', transcript);
-
-      // Basic logic to detect likely questions
-      if (transcript.endsWith("?") || transcript.toLowerCase().includes("tell me") || transcript.toLowerCase().includes("how would you")) {
-        suggestAnswer(transcript);
-      }
-    };
-
-    recognition.onerror = function(event) {
-      console.error('Recognition error:', event.error);
-    };
-
-    function suggestAnswer(questionText) {
-      const resume = localStorage.getItem('resume') || '';
-      const jobDescription = localStorage.getItem('jobDescription') || '';
-      const tone = localStorage.getItem('tone') || '';
-      const customInstructions = localStorage.getItem('customInstructions') || '';
-
-      const generatedAnswer = `
-        <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #444; border-radius: 8px;">
-          <strong>Question:</strong> ${questionText}<br><br>
-          <strong>Suggested Answer:</strong> Based on your background in ${resume.slice(0, 100)}..., and considering the role (${jobDescription.slice(0, 100)}...), respond confidently with a tone of ${tone} as instructed (${customInstructions.slice(0, 100)}...).
-        </div>
-      `;
-
-      document.getElementById('suggestions').innerHTML += generatedAnswer;
+    // Function to get selected tones
+    function getSelectedTone() {
+        let selectedTones = [];
+        const toneCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        toneCheckboxes.forEach(function (checkbox) {
+            selectedTones.push(checkbox.value);
+        });
+        return selectedTones.join(', ') || 'No tone selected';
     }
 
-  } else {
-    document.getElementById('suggestions').innerHTML = "<p>Speech Recognition not supported in this browser. Try Chrome or Edge.</p>";
-  }
-</script>
-<div id="controls" style="margin-top: 30px; text-align: center;">
-    <button id="stopListening" style="margin: 10px;">Stop Listening</button>
-    <button id="endMeeting" style="margin: 10px;">End Meeting</button>
-    <button id="downloadTranscript" style="margin: 10px;">Download Transcript</button>
-</div>
+    // Initialize Speech Recognition API for live listening
+    let recognition;
+    function startListening() {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
 
-<div id="liveTranscript" style="margin-top: 30px; color: #eee; font-size: 18px; max-height: 300px; overflow-y: auto;">
-    <h2>Live Transcript</h2>
-    <div id="transcriptContent"></div>
-</div>
+        recognition.onresult = function (event) {
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    fullTranscript += event.results[i][0].transcript + ' ';
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+            transcriptContent.innerText = fullTranscript + interimTranscript;
+        };
 
-<div id="meetingSummary" style="margin-top: 50px; color: #eee; font-size: 18px;">
-    <h2>Meeting Summary</h2>
-    <div id="summaryContent"></div>
-</div>
+        recognition.start();
+    }
+
+    // Stop listening handler
+    document.getElementById('stopListening').addEventListener('click', function () {
+        if (recognition) {
+            recognition.stop();
+            alert("Listening stopped.");
+        }
+    });
+
+    // End meeting handler
+    document.getElementById('endMeeting').addEventListener('click', function () {
+        if (recognition) {
+            recognition.stop();
+        }
+        generateMeetingSummary();
+    });
+
+    // Download transcript handler
+    document.getElementById('downloadTranscript').addEventListener('click', function () {
+        const blob = new Blob([fullTranscript], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Interview_Transcript.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // Generate meeting summary
+    function generateMeetingSummary() {
+        const sentences = fullTranscript.split('.').filter(Boolean);
+        const topics = sentences.slice(
