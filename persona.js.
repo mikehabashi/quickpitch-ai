@@ -1,102 +1,65 @@
-window.onload = function() {
-  let storedData = JSON.parse(localStorage.getItem('interviewData'));
+document.addEventListener('DOMContentLoaded', function () {
+    const generateButton = document.getElementById('generateButton');
+    const startInterviewButton = document.getElementById('startInterview');
+    const roleSelection = document.getElementById('roleSelection');
+    const interviewInstructions = document.getElementById('interviewInstructions');
+    const resumeUpload = document.getElementById('resumeUpload');
+    const jobDescriptionLink = document.getElementById('jobDescriptionLink');
+    const personaSection = document.getElementById('generatedPersona');
+    const personaRole = document.getElementById('personaRole');
+    const personaTone = document.getElementById('personaTone');
+    const personaResume = document.getElementById('personaResume');
+    const personaJobDescription = document.getElementById('personaJobDescription');
+    const liveInterviewSection = document.getElementById('liveInterview');
+    const transcriptContent = document.getElementById('transcriptContent');
+    const liveTranscriptControls = document.getElementById('liveTranscriptControls');
 
-  if (!storedData) {
-    document.getElementById('personaContent').innerHTML = '<p>No interview data found. Please go back and fill the form.</p>';
-    return;
-  }
+    let fullTranscript = "";
+    let recognition;
 
-  const personaContent = document.getElementById("personaContent");
+    // Generate Persona Click Handler
+    generateButton.addEventListener('click', function () {
+        // Display persona details
+        personaRole.textContent = `Role: ${roleSelection.value}`;
+        personaTone.textContent = `Tone: ${getSelectedTone()}`;
+        personaResume.textContent = `Resume: ${resumeUpload.files[0] ? resumeUpload.files[0].name : 'No resume uploaded'}`;
+        personaJobDescription.textContent = `Job Description: ${jobDescriptionLink.value}`;
 
-  let personaHTML = `
-    <h1>🎯 Your Generated Interview Persona</h1>
-    <p><strong>Role:</strong> ${storedData.role}</p>
-    <p><strong>Tone:</strong> ${storedData.tone.join(", ")}</p>
-    <p><strong>Resume:</strong> ${storedData.resume}</p>
-    <p><strong>Job Description:</strong> ${storedData.jobDescription}</p>
-    <hr>
-    <h2>Crush Your Interview Strategy:</h2>
-    <ul>
-      <li><strong>Mindset:</strong> Be ${storedData.tone.join(", ")} throughout the interview.</li>
-      <li><strong>Focus:</strong> Show how you perfectly match the ${storedData.role} role needs.</li>
-      <li><strong>Tips:</strong> Bring clear examples, results, and stories based on your resume and job description.</li>
-      <li><strong>Bonus:</strong> Smile, breathe, and show them you're their best hire!</li>
-    </ul>
-    <br>
-    <button onclick="clearData()">Clear & Restart</button>
-  `;
+        // Show generated persona and start interview button
+        personaSection.classList.remove('hidden');
+    });
 
-  personaContent.innerHTML = personaHTML;
-};
+    // Start Interview Click Handler
+    startInterviewButton.addEventListener('click', function () {
+        // Hide persona and show live interview
+        personaSection.classList.add('hidden');
+        liveInterviewSection.classList.remove('hidden');
+        startListening();
+    });
 
-function clearData() {
-  localStorage.removeItem('interviewData');
-  window.location.href = 'index.html'; // send back to homepage
-}
-// Initialize empty transcript
-let fullTranscript = "";
-
-// Start listening immediately when page loads
-startListening();
-
-function startListening() {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = (event) => {
-        let interimTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-                fullTranscript += event.results[i][0].transcript + ' ';
-            } else {
-                interimTranscript += event.results[i][0].transcript;
-            }
-        }
-        document.getElementById('transcriptContent').innerText = fullTranscript + interimTranscript;
-        document.getElementById('liveTranscript').scrollTop = document.getElementById('liveTranscript').scrollHeight;
-    };
-
-    recognition.start();
-
-    // Store recognition object globally so we can stop it
-    window.recognition = recognition;
-}
-
-document.getElementById('stopListening').addEventListener('click', () => {
-    if (window.recognition) {
-        window.recognition.stop();
-        alert("Listening stopped.");
+    // Function to get selected tones
+    function getSelectedTone() {
+        let selectedTones = [];
+        const toneCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        toneCheckboxes.forEach(function (checkbox) {
+            selectedTones.push(checkbox.value);
+        });
+        return selectedTones.join(', ') || 'No tone selected';
     }
-});
 
-document.getElementById('endMeeting').addEventListener('click', () => {
-    if (window.recognition) {
-        window.recognition.stop();
-    }
-    generateMeetingSummary();
-});
+    // Initialize Speech Recognition API for live listening
+    function startListening() {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
 
-document.getElementById('downloadTranscript').addEventListener('click', () => {
-    const blob = new Blob([fullTranscript], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'Interview_Transcript.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-});
-
-function generateMeetingSummary() {
-    let sentences = fullTranscript.split('.').filter(Boolean);
-    let topics = sentences.slice(0, 5).join('. ') + '.';
-    let actionItems = "Next Steps:\n- Follow-up email to thank interviewers\n- Prepare for second round discussion\n- Clarify any points raised during interview";
-
-    const thankYouNote = "\n\nThank you for your time and consideration.";
-
-    document.getElementById('summaryContent').innerText = 
-        `Summary of Key Topics:\n${topics}\n\nMeeting Minutes:\n${fullTranscript}\n\n${actionItems}${thankYouNote}`;
-    
-    document.getElementById('meetingSummary').scrollIntoView({ behavior: 'smooth' });
-}
+        recognition.onresult = function (event) {
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    fullTranscript += event.results[i][0].transcript + ' ';
+                    // Generate answer based on the persona, resume, and instructions
+                    generateAnswer(event.results[i][0].transcript);
+                } else {
+                   
