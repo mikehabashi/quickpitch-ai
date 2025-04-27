@@ -1,6 +1,6 @@
-// Wait for the document to load
 document.addEventListener('DOMContentLoaded', function () {
     const generateButton = document.getElementById('generateButton');
+    const startInterviewButton = document.getElementById('startInterview');
     const roleSelection = document.getElementById('roleSelection');
     const interviewInstructions = document.getElementById('interviewInstructions');
     const resumeUpload = document.getElementById('resumeUpload');
@@ -10,21 +10,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const personaTone = document.getElementById('personaTone');
     const personaResume = document.getElementById('personaResume');
     const personaJobDescription = document.getElementById('personaJobDescription');
+    const liveInterviewSection = document.getElementById('liveInterview');
     const transcriptContent = document.getElementById('transcriptContent');
     const liveTranscriptControls = document.getElementById('liveTranscriptControls');
 
     let fullTranscript = "";
+    let recognition;
 
-    // Generate persona button click handler
+    // Generate Persona Click Handler
     generateButton.addEventListener('click', function () {
-        // Display persona based on selections
+        // Display persona details
         personaRole.textContent = `Role: ${roleSelection.value}`;
         personaTone.textContent = `Tone: ${getSelectedTone()}`;
         personaResume.textContent = `Resume: ${resumeUpload.files[0] ? resumeUpload.files[0].name : 'No resume uploaded'}`;
         personaJobDescription.textContent = `Job Description: ${jobDescriptionLink.value}`;
 
+        // Show generated persona and start interview button
         personaSection.classList.remove('hidden');
-        liveTranscriptControls.classList.remove('hidden');
+    });
+
+    // Start Interview Click Handler
+    startInterviewButton.addEventListener('click', function () {
+        // Hide persona and show live interview
+        personaSection.classList.add('hidden');
+        liveInterviewSection.classList.remove('hidden');
+        startListening();
     });
 
     // Function to get selected tones
@@ -38,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Initialize Speech Recognition API for live listening
-    let recognition;
     function startListening() {
         recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.continuous = true;
@@ -50,44 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
                     fullTranscript += event.results[i][0].transcript + ' ';
+                    // Generate answer based on the persona, resume, and instructions
+                    generateAnswer(event.results[i][0].transcript);
                 } else {
-                    interimTranscript += event.results[i][0].transcript;
-                }
-            }
-            transcriptContent.innerText = fullTranscript + interimTranscript;
-        };
-
-        recognition.start();
-    }
-
-    // Stop listening handler
-    document.getElementById('stopListening').addEventListener('click', function () {
-        if (recognition) {
-            recognition.stop();
-            alert("Listening stopped.");
-        }
-    });
-
-    // End meeting handler
-    document.getElementById('endMeeting').addEventListener('click', function () {
-        if (recognition) {
-            recognition.stop();
-        }
-        generateMeetingSummary();
-    });
-
-    // Download transcript handler
-    document.getElementById('downloadTranscript').addEventListener('click', function () {
-        const blob = new Blob([fullTranscript], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Interview_Transcript.txt';
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-
-    // Generate meeting summary
-    function generateMeetingSummary() {
-        const sentences = fullTranscript.split('.').filter(Boolean);
-        const topics = sentences.slice(
+                   
