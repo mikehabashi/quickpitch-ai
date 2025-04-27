@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const generateButton = document.getElementById('generateButton');
     const startInterviewButton = document.getElementById('startInterview');
     const roleSelection = document.getElementById('roleSelection');
-    const interviewInstructions = document.getElementById('interviewInstructions');
     const resumeUpload = document.getElementById('resumeUpload');
     const jobDescriptionLink = document.getElementById('jobDescriptionLink');
     const personaSection = document.getElementById('generatedPersona');
@@ -13,37 +12,132 @@ document.addEventListener('DOMContentLoaded', function () {
     const liveInterviewSection = document.getElementById('liveInterview');
     const transcriptContent = document.getElementById('transcriptContent');
     const liveTranscriptControls = document.getElementById('liveTranscriptControls');
+    const stopListeningButton = document.getElementById('stopListening');
+    const endMeetingButton = document.getElementById('endMeeting');
+    const downloadTranscriptButton = document.getElementById('downloadTranscript');
+    const summaryContent = document.getElementById('summaryContent');
 
-    let fullTranscript = "";
+    let fullTranscript = '';
     let recognition;
+    let generatedPersona = {}; // Store generated persona data
 
-    // Fix: Add event listener on generate button
+    // Function to generate answers from ChatGPT based on the persona and resume
+    async function generateAnswerFromChatGPT(question) {
+        const response = await fetch('/api/generateAnswer', { // Endpoint for API interaction with ChatGPT
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                question: question,
+                persona: generatedPersona,
+                resume: resumeUpload.files[0],
+                jobDescription: jobDescriptionLink.value
+            })
+        });
+        const data = await response.json();
+        return data.answer; // Assuming API returns the generated answer
+    }
+
+    // Handle generate button click
     generateButton.addEventListener('click', function () {
-        // Check if form fields are filled in
+        // Validate inputs
         if (!roleSelection.value || !resumeUpload.files.length || !jobDescriptionLink.value) {
             alert("Please fill in all fields before generating the persona.");
             return;
         }
 
-        // Display persona details
-        personaRole.textContent = `Role: ${roleSelection.value}`;
-        personaTone.textContent = `Tone: ${getSelectedTone()}`;
-        personaResume.textContent = `Resume: ${resumeUpload.files[0] ? resumeUpload.files[0].name : 'No resume uploaded'}`;
-        personaJobDescription.textContent = `Job Description: ${jobDescriptionLink.value}`;
+        // Generate persona details
+        generatedPersona = {
+            role: roleSelection.value,
+            tone: getSelectedTone(),
+            resume: resumeUpload.files[0].name,
+            jobDescription: jobDescriptionLink.value
+        };
 
-        // Show generated persona and start interview button
+        // Show generated persona details
+        personaRole.textContent = `Role: ${generatedPersona.role}`;
+        personaTone.textContent = `Tone: ${generatedPersona.tone}`;
+        personaResume.textContent = `Resume: ${generatedPersona.resume}`;
+        personaJobDescription.textContent = `Job Description: ${generatedPersona.jobDescription}`;
+
+        // Show persona section
         personaSection.classList.remove('hidden');
     });
 
-    // Start Interview Click Handler
+    // Handle start interview button click
     startInterviewButton.addEventListener('click', function () {
-        // Hide persona and show live interview
         personaSection.classList.add('hidden');
         liveInterviewSection.classList.remove('hidden');
         startListening();
     });
 
-    // Function to get selected tones
+    // Start listening to the interview
+    function startListening() {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = async function (event) {
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    const question = event.results[i][0].transcript;
+                    fullTranscript += question + ' ';
+                    transcriptContent.textContent = fullTranscript;
+
+                    // Generate answer using ChatGPT
+                    const answer = await generateAnswerFromChatGPT(question);
+                    transcriptContent.textContent += `\nAnswer: ${answer}\n`;
+                }
+            }
+        };
+
+        recognition.start();
+    }
+
+    // Stop listening button click handler
+    stopListeningButton.addEventListener('click', function () {
+        recognition.stop();
+    });
+
+    // End meeting and generate summary
+    endMeetingButton.addEventListener('click', function () {
+        generateSummary();
+    });
+
+    // Generate meeting summary, minutes, and next steps
+    async function generateSummary() {
+        const response = await fetch('/api/generateSummary', { // API endpoint for summary generation
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                transcript: fullTranscript
+            })
+        });
+        const data = await response.json();
+        summaryContent.textContent = `Summary: ${data.summary}`;
+        const nextSteps = data.nextSteps;
+        summaryContent.innerHTML += `<br><strong>Next Steps:</strong><ul>`;
+        nextSteps.forEach(step => {
+            summaryContent.innerHTML += `<li>${step}</li>`;
+        });
+        summaryContent.innerHTML += `</ul>`;
+    }
+
+    // Download transcript button click handler
+    downloadTranscriptButton.addEventListener('click', function () {
+        const blob = new Blob([fullTranscript], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'interview_transcript.txt';
+        link.click();
+    });
+
+    // Get selected tone from checkboxes
     function getSelectedTone() {
         let selectedTones = [];
         const toneCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
@@ -51,44 +145,5 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedTones.push(checkbox.value);
         });
         return selectedTones.join(', ') || 'No tone selected';
-    }
-
-    // Initialize Speech Recognition API for live listening
-    function startListening() {
-        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        recognition.onresult = function (event) {
-            let interimTranscript = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    fullTranscript += event.results[i][0].transcript + ' ';
-                    // Generate answer based on the persona, resume, and instructions
-                    generateAnswer(event.results[i][0].transcript);
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
-                }
-            }
-
-            // Update the live transcript display
-            transcriptContent.textContent = fullTranscript + interimTranscript;
-        };
-
-        recognition.onerror = function (event) {
-            console.error("Speech recognition error: ", event.error);
-        };
-
-        recognition.start();
-    }
-
-    // Function to generate answers based on the interview question
-    function generateAnswer(question) {
-        // Here, you would integrate the logic to generate answers based on the persona, instructions, and resume
-        const answer = `Answer generated for the question: "${question}" based on your persona.`;
-
-        // Display the answer in real-time (could be improved with actual AI logic later)
-        transcriptContent.innerHTML += `<div class="answer">${answer}</div>`;
     }
 });
