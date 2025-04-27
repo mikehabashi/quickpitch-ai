@@ -55,3 +55,18 @@
     document.getElementById('suggestions').innerHTML = "<p>Speech Recognition not supported in this browser. Try Chrome or Edge.</p>";
   }
 </script>
+<div id="controls" style="margin-top: 30px; text-align: center;">
+    <button id="stopListening" style="margin: 10px;">Stop Listening</button>
+    <button id="endMeeting" style="margin: 10px;">End Meeting</button>
+    <button id="downloadTranscript" style="margin: 10px;">Download Transcript</button>
+</div>
+
+<div id="liveTranscript" style="margin-top: 30px; color: #eee; font-size: 18px; max-height: 300px; overflow-y: auto;">
+    <h2>Live Transcript</h2>
+    <div id="transcriptContent"></div>
+</div>
+
+<div id="meetingSummary" style="margin-top: 50px; color: #eee; font-size: 18px;">
+    <h2>Meeting Summary</h2>
+    <div id="summaryContent"></div>
+</div>
