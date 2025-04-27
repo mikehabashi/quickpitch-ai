@@ -1,67 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crush the Interview</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>QuickPitch.AI - Interview Assistant</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #00bcd4;
+    }
+    select, textarea, input, button {
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      padding: 12px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00bcd4;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #0097a7;
+    }
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+    }
+    .footer a {
+      color: #777;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <h1>Crush the Interview</h1>
-        </div>
-        <div class="slogan">
-            <p>Empower Your Interview with AI-Driven Personas</p>
-        </div>
-    </header>
 
-    <main>
-        <section id="personaGeneration">
-            <h2>Create Your Persona</h2>
-            <form id="personaForm">
-                <label for="roleSelection">Select Role:</label>
-                <select id="roleSelection">
-                    <option value="alliances">Alliances Manager</option>
-                    <option value="product">Product Manager</option>
-                    <option value="sales">Sales Executive</option>
-                </select>
+  <h1>QuickPitch.AI Interview Setup</h1>
 
-                <label for="toneSelection">Select Tone:</label>
-                <input type="checkbox" id="toneFormal" value="formal"> Formal
-                <input type="checkbox" id="toneCasual" value="casual"> Casual
+  <h2>Choose Interview Role</h2>
+  <select id="role">
+    <option value="Alliances/Partnership Role">Alliances/Partnership Role</option>
+    <option value="Sales Executive">Sales Executive</option>
+    <option value="Marketing Role">Marketing Role</option>
+  </select>
 
-                <label for="resumeUpload">Upload Your Resume:</label>
-                <input type="file" id="resumeUpload" accept=".pdf,.doc,.docx">
+  <h2>Upload Your Resume</h2>
+  <input type="file" id="resumeUpload" accept=".txt,.pdf,.docx" />
 
-                <label for="jobDescriptionLink">Paste Job Description Link:</label>
-                <input type="text" id="jobDescriptionLink" placeholder="Paste the link here">
+  <h2>Paste Job Description or Link</h2>
+  <textarea id="job" rows="6" placeholder="Paste the job description or job link here..."></textarea>
 
-                <button type="button" id="generateButton">Generate Persona</button>
-            </form>
-        </section>
+  <h2>Give Copilot Instructions</h2>
+  <textarea id="instructions" rows="6" placeholder="e.g., 'Stay humble but confident, focus on leadership examples, avoid sounding robotic'"></textarea>
 
-        <section id="generatedPersona" class="hidden">
-            <h2>Your Generated Interview Persona</h2>
-            <p id="personaRole"></p>
-            <p id="personaTone"></p>
-            <p id="personaResume"></p>
-            <p id="personaJobDescription"></p>
-            <button id="startInterview">Start Interview</button>
-        </section>
+  <h2>Choose Tone (Multiple Allowed)</h2>
+  <select id="tone" multiple>
+    <option value="Professional & Sharp">Professional & Sharp</option>
+    <option value="Friendly & Conversational">Friendly & Conversational</option>
+    <option value="Authoritative & Confident">Authoritative & Confident</option>
+    <option value="Humble & Collaborative">Humble & Collaborative</option>
+    <option value="Industry Expert">Industry Expert</option>
+    <option value="Subtle Humor">Subtle Humor</option>
+  </select>
 
-        <section id="liveInterview" class="hidden">
-            <h2>Live Interview Transcript</h2>
-            <div id="transcriptContent"></div>
-            <div id="liveTranscriptControls">
-                <button id="stopListening">Stop Listening</button>
-                <button id="endMeeting">End Meeting</button>
-                <button id="downloadTranscript">Download Transcript</button>
-            </div>
-            <div id="summaryContent"></div>
-        </section>
-    </main>
+  <button id="generatePersona">Generate Interview Persona</button>
 
-    <script src="script.js"></script>
+  <div class="footer">
+    <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+  </div>
+
+<script>
+document.getElementById('generatePersona').addEventListener('click', async function() {
+  const role = document.getElementById('role').value;
+  const job = document.getElementById('job').value;
+  const instructions = document.getElementById('instructions').value;
+  const toneElements = document.getElementById('tone').selectedOptions;
+  const tones = Array.from(toneElements).map(option => option.value);
+
+  let resumeText = '';
+  const fileInput = document.getElementById('resumeUpload');
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    resumeText = await file.text();
+  }
+
+  const data = {
+    role,
+    resume: resumeText,
+    job,
+    instructions,
+    tones
+  };
+
+  localStorage.setItem('personaData', JSON.stringify(data));
+  window.location.href = 'persona.html';
+});
+</script>
+
 </body>
 </html>
