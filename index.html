@@ -13,7 +13,7 @@
     h1, h2 {
       color: #00bcd4;
     }
-    select, textarea, button {
+    select, textarea, input, button {
       width: 100%;
       margin-top: 10px;
       margin-bottom: 20px;
@@ -57,11 +57,14 @@
     <option value="Marketing Role">Marketing Role</option>
   </select>
 
-  <h2>Paste Your Resume</h2>
-  <textarea id="resume" rows="8" placeholder="Paste your resume here..."></textarea>
+  <h2>Upload Your Resume</h2>
+  <input type="file" id="resumeUpload" accept=".txt,.pdf,.docx" />
 
-  <h2>Paste Job Description</h2>
-  <textarea id="job" rows="8" placeholder="Paste the job description here..."></textarea>
+  <h2>Paste Job Description or Link</h2>
+  <textarea id="job" rows="6" placeholder="Paste the job description or job link here..."></textarea>
+
+  <h2>Give Copilot Instructions</h2>
+  <textarea id="instructions" rows="6" placeholder="e.g., 'Stay humble but confident, focus on leadership examples, avoid sounding robotic'"></textarea>
 
   <h2>Choose Tone (Multiple Allowed)</h2>
   <select id="tone" multiple>
@@ -80,17 +83,25 @@
   </div>
 
 <script>
-document.getElementById('generatePersona').addEventListener('click', function() {
+document.getElementById('generatePersona').addEventListener('click', async function() {
   const role = document.getElementById('role').value;
-  const resume = document.getElementById('resume').value;
   const job = document.getElementById('job').value;
+  const instructions = document.getElementById('instructions').value;
   const toneElements = document.getElementById('tone').selectedOptions;
   const tones = Array.from(toneElements).map(option => option.value);
 
+  let resumeText = '';
+  const fileInput = document.getElementById('resumeUpload');
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    resumeText = await file.text();
+  }
+
   const data = {
     role,
-    resume,
+    resume: resumeText,
     job,
+    instructions,
     tones
   };
 
@@ -98,7 +109,6 @@ document.getElementById('generatePersona').addEventListener('click', function() 
   window.location.href = 'persona.html';
 });
 </script>
-      
 
 </body>
 </html>
