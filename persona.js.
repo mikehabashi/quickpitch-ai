@@ -33,3 +33,70 @@ function clearData() {
   localStorage.removeItem('interviewData');
   window.location.href = 'index.html'; // send back to homepage
 }
+// Initialize empty transcript
+let fullTranscript = "";
+
+// Start listening immediately when page loads
+startListening();
+
+function startListening() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event) => {
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                fullTranscript += event.results[i][0].transcript + ' ';
+            } else {
+                interimTranscript += event.results[i][0].transcript;
+            }
+        }
+        document.getElementById('transcriptContent').innerText = fullTranscript + interimTranscript;
+        document.getElementById('liveTranscript').scrollTop = document.getElementById('liveTranscript').scrollHeight;
+    };
+
+    recognition.start();
+
+    // Store recognition object globally so we can stop it
+    window.recognition = recognition;
+}
+
+document.getElementById('stopListening').addEventListener('click', () => {
+    if (window.recognition) {
+        window.recognition.stop();
+        alert("Listening stopped.");
+    }
+});
+
+document.getElementById('endMeeting').addEventListener('click', () => {
+    if (window.recognition) {
+        window.recognition.stop();
+    }
+    generateMeetingSummary();
+});
+
+document.getElementById('downloadTranscript').addEventListener('click', () => {
+    const blob = new Blob([fullTranscript], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Interview_Transcript.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+function generateMeetingSummary() {
+    let sentences = fullTranscript.split('.').filter(Boolean);
+    let topics = sentences.slice(0, 5).join('. ') + '.';
+    let actionItems = "Next Steps:\n- Follow-up email to thank interviewers\n- Prepare for second round discussion\n- Clarify any points raised during interview";
+
+    const thankYouNote = "\n\nThank you for your time and consideration.";
+
+    document.getElementById('summaryContent').innerText = 
+        `Summary of Key Topics:\n${topics}\n\nMeeting Minutes:\n${fullTranscript}\n\n${actionItems}${thankYouNote}`;
+    
+    document.getElementById('meetingSummary').scrollIntoView({ behavior: 'smooth' });
+}
