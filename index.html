@@ -63,13 +63,16 @@
             margin-bottom: 20px;
         }
 
-        /* Styles for the interview session content */
-        .sessionContent {
-            margin-top: 40px;
+        .form-section {
+            margin-top: 20px;
         }
 
-        .hidden {
-            display: none;
+        .form-section h2 {
+            margin-bottom: 10px;
+        }
+
+        .sessionContent {
+            margin-top: 40px;
         }
 
         .transcript-container {
@@ -78,23 +81,10 @@
             padding: 20px;
             border-radius: 5px;
         }
-        
-        /* Button to generate persona */
-        #generateButton {
-            display: block;
-            margin-top: 20px;
-        }
 
+        /* Style for the hidden persona content */
         .hidden {
             display: none;
-        }
-
-        .form-section {
-            margin-top: 20px;
-        }
-
-        .form-section h2 {
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -106,31 +96,31 @@
         <div class="form-section">
             <h2>Select Interview Role</h2>
             <select id="roleSelection">
-                <option value="alliances">Alliances/Partnership Role</option>
+                <option value="alliances">Alliances Manager</option>
                 <option value="sales">Sales Executive</option>
                 <option value="marketing">Marketing</option>
             </select>
         </div>
 
-        <!-- Instructions for Interview -->
+        <!-- Interview Instructions Section -->
         <div class="form-section">
             <h2>Provide Interview Instructions</h2>
             <textarea id="interviewInstructions" placeholder="Give instructions to your interview assistant here..." rows="4"></textarea>
         </div>
 
-        <!-- Resume Upload -->
+        <!-- Resume Upload Section -->
         <div class="form-section">
             <h2>Upload Your Resume</h2>
             <input type="file" id="resumeUpload" />
         </div>
 
-        <!-- Job Description link input -->
+        <!-- Job Description Link -->
         <div class="form-section">
             <h2>Job Description Link</h2>
             <input type="text" id="jobDescriptionLink" placeholder="Paste the job description link here..." />
         </div>
 
-        <!-- Tone selection -->
+        <!-- Tone Selection -->
         <div class="form-section">
             <h2>Select Interview Tone & Style</h2>
             <div>
@@ -144,25 +134,28 @@
             </div>
         </div>
 
-        <!-- Button to generate persona -->
+        <!-- Button to Generate Persona -->
         <button id="generateButton">Generate Interview Persona</button>
 
-        <!-- Hidden content (generated persona) -->
+        <!-- Persona Result Section -->
         <div id="generatedPersona" class="hidden">
             <h2>Your Generated Interview Persona</h2>
             <p id="personaRole"></p>
             <p id="personaTone"></p>
             <p id="personaResume"></p>
             <p id="personaJobDescription"></p>
+            <button id="startInterview">Start Interview</button>
         </div>
 
-        <!-- Live transcript and controls -->
-        <div id="transcriptContent" class="transcript-container hidden"></div>
-        <div class="transcript-container hidden" id="liveTranscriptControls">
-            <button id="startListening">Start Listening</button>
-            <button id="stopListening">Stop Listening</button>
-            <button id="endMeeting">End Meeting</button>
-            <button id="downloadTranscript">Download Transcript</button>
+        <!-- Live Transcript and Controls -->
+        <div id="liveInterview" class="hidden">
+            <div id="transcriptContent" class="transcript-container"></div>
+            <div id="liveTranscriptControls" class="transcript-container">
+                <button id="startListening">Start Listening</button>
+                <button id="stopListening">Stop Listening</button>
+                <button id="endMeeting">End Meeting</button>
+                <button id="downloadTranscript">Download Transcript</button>
+            </div>
         </div>
     </div>
 
