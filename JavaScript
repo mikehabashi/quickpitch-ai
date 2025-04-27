@@ -1,0 +1,94 @@
+document.addEventListener('DOMContentLoaded', function () {
+    const generateButton = document.getElementById('generateButton');
+    const startInterviewButton = document.getElementById('startInterview');
+    const roleSelection = document.getElementById('roleSelection');
+    const interviewInstructions = document.getElementById('interviewInstructions');
+    const resumeUpload = document.getElementById('resumeUpload');
+    const jobDescriptionLink = document.getElementById('jobDescriptionLink');
+    const personaSection = document.getElementById('generatedPersona');
+    const personaRole = document.getElementById('personaRole');
+    const personaTone = document.getElementById('personaTone');
+    const personaResume = document.getElementById('personaResume');
+    const personaJobDescription = document.getElementById('personaJobDescription');
+    const liveInterviewSection = document.getElementById('liveInterview');
+    const transcriptContent = document.getElementById('transcriptContent');
+    const liveTranscriptControls = document.getElementById('liveTranscriptControls');
+
+    let fullTranscript = "";
+    let recognition;
+
+    // Fix: Add event listener on generate button
+    generateButton.addEventListener('click', function () {
+        // Check if form fields are filled in
+        if (!roleSelection.value || !resumeUpload.files.length || !jobDescriptionLink.value) {
+            alert("Please fill in all fields before generating the persona.");
+            return;
+        }
+
+        // Display persona details
+        personaRole.textContent = `Role: ${roleSelection.value}`;
+        personaTone.textContent = `Tone: ${getSelectedTone()}`;
+        personaResume.textContent = `Resume: ${resumeUpload.files[0] ? resumeUpload.files[0].name : 'No resume uploaded'}`;
+        personaJobDescription.textContent = `Job Description: ${jobDescriptionLink.value}`;
+
+        // Show generated persona and start interview button
+        personaSection.classList.remove('hidden');
+    });
+
+    // Start Interview Click Handler
+    startInterviewButton.addEventListener('click', function () {
+        // Hide persona and show live interview
+        personaSection.classList.add('hidden');
+        liveInterviewSection.classList.remove('hidden');
+        startListening();
+    });
+
+    // Function to get selected tones
+    function getSelectedTone() {
+        let selectedTones = [];
+        const toneCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        toneCheckboxes.forEach(function (checkbox) {
+            selectedTones.push(checkbox.value);
+        });
+        return selectedTones.join(', ') || 'No tone selected';
+    }
+
+    // Initialize Speech Recognition API for live listening
+    function startListening() {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = function (event) {
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    fullTranscript += event.results[i][0].transcript + ' ';
+                    // Generate answer based on the persona, resume, and instructions
+                    generateAnswer(event.results[i][0].transcript);
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            // Update the live transcript display
+            transcriptContent.textContent = fullTranscript + interimTranscript;
+        };
+
+        recognition.onerror = function (event) {
+            console.error("Speech recognition error: ", event.error);
+        };
+
+        recognition.start();
+    }
+
+    // Function to generate answers based on the interview question
+    function generateAnswer(question) {
+        // Here, you would integrate the logic to generate answers based on the persona, instructions, and resume
+        const answer = `Answer generated for the question: "${question}" based on your persona.`;
+
+        // Display the answer in real-time (could be improved with actual AI logic later)
+        transcriptContent.innerHTML += `<div class="answer">${answer}</div>`;
+    }
+});
