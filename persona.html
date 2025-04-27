@@ -2,28 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Your Interview Persona - QuickPitch.AI</title>
+  <title>Your QuickPitch.AI Persona</title>
   <style>
     body {
       background-color: #121212;
       color: #ffffff;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       padding: 20px;
     }
     h1, h2, p {
       color: #ffffff;
     }
-    .section {
-      margin-bottom: 30px;
-    }
     button {
+      margin-top: 30px;
       background-color: #00bcd4;
-      color: #ffffff;
+      color: #fff;
       padding: 10px 20px;
       border: none;
       border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #0097a7;
@@ -34,60 +32,34 @@
       font-size: 14px;
       color: #777;
     }
-    .footer a {
-      color: #777;
-      text-decoration: none;
-      margin: 0 10px;
-    }
   </style>
 </head>
 <body>
 
-  <h1>Your Generated Interview Persona</h1>
+<h1>Your Interview Persona</h1>
 
-  <div class="section">
-    <h2>Role:</h2>
-    <p id="roleOutput"></p>
-  </div>
+<div id="output"></div>
 
-  <div class="section">
-    <h2>Tone and Style:</h2>
-    <p id="toneOutput"></p>
-  </div>
+<button onclick="window.location.href='index.html'">Start Over</button>
 
-  <div class="section">
-    <h2>Resume Overview:</h2>
-    <p id="resumeOutput"></p>
-  </div>
+<div class="footer">
+  <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+</div>
 
-  <div class="section">
-    <h2>Job Description Focus:</h2>
-    <p id="jobDescriptionOutput"></p>
-  </div>
+<script>
+const personaData = JSON.parse(localStorage.getItem('personaData'));
 
-  <button onclick="clearData()">Start Over</button>
-
-  <div class="footer">
-    <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-  </div>
-
-  <script>
-    // Load interview data from localStorage
-    const interviewData = JSON.parse(localStorage.getItem('interviewData'));
-
-    if (interviewData) {
-      document.getElementById('roleOutput').textContent = interviewData.role;
-      document.getElementById('toneOutput').textContent = interviewData.tone.join(', ');
-      document.getElementById('resumeOutput').textContent = interviewData.resume;
-      document.getElementById('jobDescriptionOutput').textContent = interviewData.jobDescription;
-    }
-
-    // Clear localStorage if user wants to start over
-    function clearData() {
-      localStorage.removeItem('interviewData');
-      window.location.href = "index.html";
-    }
-  </script>
+if (personaData) {
+  document.getElementById('output').innerHTML = `
+    <h2>Role:</h2><p>${personaData.role}</p>
+    <h2>Resume Highlights:</h2><p>${personaData.resume}</p>
+    <h2>Job Description:</h2><p>${personaData.job}</p>
+    <h2>Tones:</h2><p>${personaData.tones.join(', ')}</p>
+  `;
+} else {
+  document.getElementById('output').innerHTML = `<p>No persona data found. Please go back and fill the form.</p>`;
+}
+</script>
 
 </body>
 </html>
