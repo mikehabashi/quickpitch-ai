@@ -162,3 +162,70 @@
     <script src="js/script.js"></script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crush the Interview</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Crush the Interview</h1>
+        </div>
+        <div class="slogan">
+            <p>Empower Your Interview with AI-Driven Personas</p>
+        </div>
+    </header>
+
+    <main>
+        <section id="personaGeneration">
+            <h2>Create Your Persona</h2>
+            <form id="personaForm">
+                <label for="roleSelection">Select Role:</label>
+                <select id="roleSelection">
+                    <option value="alliances">Alliances Manager</option>
+                    <option value="product">Product Manager</option>
+                    <option value="sales">Sales Executive</option>
+                </select>
+
+                <label for="toneSelection">Select Tone:</label>
+                <input type="checkbox" id="toneFormal" value="formal"> Formal
+                <input type="checkbox" id="toneCasual" value="casual"> Casual
+
+                <label for="resumeUpload">Upload Your Resume:</label>
+                <input type="file" id="resumeUpload" accept=".pdf,.doc,.docx">
+
+                <label for="jobDescriptionLink">Paste Job Description Link:</label>
+                <input type="text" id="jobDescriptionLink" placeholder="Paste the link here">
+
+                <button type="button" id="generateButton">Generate Persona</button>
+            </form>
+        </section>
+
+        <section id="generatedPersona" class="hidden">
+            <h2>Your Generated Interview Persona</h2>
+            <p id="personaRole"></p>
+            <p id="personaTone"></p>
+            <p id="personaResume"></p>
+            <p id="personaJobDescription"></p>
+            <button id="startInterview">Start Interview</button>
+        </section>
+
+        <section id="liveInterview" class="hidden">
+            <h2>Live Interview Transcript</h2>
+            <div id="transcriptContent"></div>
+            <div id="liveTranscriptControls">
+                <button id="stopListening">Stop Listening</button>
+                <button id="endMeeting">End Meeting</button>
+                <button id="downloadTranscript">Download Transcript</button>
+            </div>
+            <div id="summaryContent"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
