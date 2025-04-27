@@ -1,114 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>QuickPitch.AI - Interview Assistant</title>
-  <style>
-    body {
-      background-color: #121212;
-      color: #ffffff;
-      font-family: 'Arial', sans-serif;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #00bcd4;
-    }
-    select, textarea, input, button {
-      width: 100%;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      padding: 12px;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-    button {
-      background-color: #00bcd4;
-      color: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background-color: #0097a7;
-    }
-    .footer {
-      margin-top: 50px;
-      text-align: center;
-      font-size: 14px;
-      color: #777;
-    }
-    .footer a {
-      color: #777;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickPitch.AI: Interview Preparation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #222;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: #ff7f50;
+        }
+        .container {
+            padding: 40px;
+            text-align: center;
+        }
+        .button {
+            background-color: #ff7f50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+            width: 250px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #ff4500;
+        }
+        .transcript-box {
+            background-color: #333;
+            width: 80%;
+            height: 300px;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-y: auto;
+        }
+        .text-area {
+            background: #111;
+            color: white;
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .summary-box {
+            background-color: #333;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        footer {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff7f50;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>QuickPitch.AI</h1>
+        <p>Your Interview Assistant to Help You Crush Every Interview</p>
+    </header>
 
-  <h1>QuickPitch.AI Interview Setup</h1>
+    <div class="container">
+        <button class="button" id="startListening">Start Listening</button>
+        <button class="button" id="stopListening">Stop Listening</button>
+        <button class="button" id="generatePersona">Generate Interview Persona</button>
+        <button class="button" id="endMeeting">End Meeting and Generate Summary</button>
+        <button class="button" id="downloadTranscript">Download Transcript</button>
 
-  <h2>Choose Interview Role</h2>
-  <select id="role">
-    <option value="Alliances/Partnership Role">Alliances/Partnership Role</option>
-    <option value="Sales Executive">Sales Executive</option>
-    <option value="Marketing Role">Marketing Role</option>
-  </select>
+        <div class="transcript-box" id="liveTranscript">
+            <p class="text-area" id="transcriptContent">Your live transcript will appear here...</p>
+        </div>
 
-  <h2>Upload Your Resume</h2>
-  <input type="file" id="resumeUpload" accept=".txt,.pdf,.docx" />
+        <div class="summary-box" id="meetingSummary">
+            <h3>Meeting Summary</h3>
+            <p id="summaryContent">Summary of your meeting will be shown here.</p>
+        </div>
+    </div>
 
-  <h2>Paste Job Description or Link</h2>
-  <textarea id="job" rows="6" placeholder="Paste the job description or job link here..."></textarea>
+    <footer>
+        <p>Privacy Policy | Terms of Service</p>
+    </footer>
 
-  <h2>Give Copilot Instructions</h2>
-  <textarea id="instructions" rows="6" placeholder="e.g., 'Stay humble but confident, focus on leadership examples, avoid sounding robotic'"></textarea>
+    <script>
+        // Initialize empty transcript
+        let fullTranscript = "";
 
-  <h2>Choose Tone (Multiple Allowed)</h2>
-  <select id="tone" multiple>
-    <option value="Professional & Sharp">Professional & Sharp</option>
-    <option value="Friendly & Conversational">Friendly & Conversational</option>
-    <option value="Authoritative & Confident">Authoritative & Confident</option>
-    <option value="Humble & Collaborative">Humble & Collaborative</option>
-    <option value="Industry Expert">Industry Expert</option>
-    <option value="Subtle Humor">Subtle Humor</option>
-  </select>
+        // Start listening immediately when page loads
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
-  <button id="generatePersona">Generate Interview Persona</button>
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        fullTranscript += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+                document.getElementById('transcriptContent').innerText = fullTranscript + interimTranscript;
+                document.getElementById('liveTranscript').scrollTop = document.getElementById('liveTranscript').scrollHeight;
+            };
 
-  <div class="footer">
-    <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-  </div>
+            recognition.start();
 
-<script>
-document.getElementById('generatePersona').addEventListener('click', async function() {
-  const role = document.getElementById('role').value;
-  const job = document.getElementById('job').value;
-  const instructions = document.getElementById('instructions').value;
-  const toneElements = document.getElementById('tone').selectedOptions;
-  const tones = Array.from(toneElements).map(option => option.value);
+            // Store recognition object globally so we can stop it
+            window.recognition = recognition;
+        }
 
-  let resumeText = '';
-  const fileInput = document.getElementById('resumeUpload');
-  if (fileInput.files.length > 0) {
-    const file = fileInput.files[0];
-    resumeText = await file.text();
-  }
+        // Event Listeners for buttons
+        document.getElementById('startListening').addEventListener('click', startListening);
+        document.getElementById('stopListening').addEventListener('click', () => {
+            if (window.recognition) {
+                window.recognition.stop();
+                alert("Listening stopped.");
+            }
+        });
 
-  const data = {
-    role,
-    resume: resumeText,
-    job,
-    instructions,
-    tones
-  };
+        document.getElementById('endMeeting').addEventListener('click', () => {
+            if (window.recognition) {
+                window.recognition.stop();
+            }
+            generateMeetingSummary();
+        });
 
-  localStorage.setItem('personaData', JSON.stringify(data));
-  window.location.href = 'persona.html';
-});
-</script>
+        document.getElementById('downloadTranscript').addEventListener('click', () => {
+            const blob = new Blob([fullTranscript], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Interview_Transcript.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
 
+        function generateMeetingSummary() {
+            let sentences = fullTranscript.split('.').filter(Boolean);
+            let topics = sentences.slice(0, 5).join('. ') + '.';
+            let actionItems = "Next Steps:\n- Follow-up email to thank interviewers\n- Prepare for second round discussion\n- Clarify any points raised during interview";
+
+            const thankYouNote = "\n\nThank you for your time and consideration.";
+
+            document.getElementById('summaryContent').innerText = 
+                `Summary of Key Topics:\n${topics}\n\nMeeting Minutes:\n${fullTranscript}\n\n${actionItems}${thankYouNote}`;
+            
+            document.getElementById('meetingSummary').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
