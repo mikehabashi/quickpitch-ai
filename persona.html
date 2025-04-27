@@ -1,65 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Your QuickPitch.AI Persona</title>
-  <style>
-    body {
-      background-color: #121212;
-      color: #ffffff;
-      font-family: 'Arial', sans-serif;
-      padding: 20px;
-    }
-    h1, h2, p {
-      color: #ffffff;
-    }
-    button {
-      margin-top: 30px;
-      background-color: #00bcd4;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0097a7;
-    }
-    .footer {
-      margin-top: 50px;
-      text-align: center;
-      font-size: 14px;
-      color: #777;
-    }
-  </style>
-</head>
-<body>
+<!-- Live Suggestions Area -->
+<section id="live-suggestions" style="background-color: #111; color: #fff; padding: 20px; margin-top: 30px; border-radius: 10px;">
+  <h2>Live Suggestions (Quiet Mode)</h2>
+  <div id="suggestions" style="margin-top: 15px;">
+    <p>Listening for interviewer questions... Suggestions will appear here quietly.</p>
+  </div>
+</section>
 
-<h1>Your Interview Persona</h1>
-
-<div id="output"></div>
-
-<button onclick="window.location.href='index.html'">Start Over</button>
-
-<div class="footer">
-  <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-</div>
-
+<!-- Microphone Listening Script -->
 <script>
-const personaData = JSON.parse(localStorage.getItem('personaData'));
+  // Check browser compatibility
+  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-if (personaData) {
-  document.getElementById('output').innerHTML = `
-    <h2>Role:</h2><p>${personaData.role}</p>
-    <h2>Resume Highlights:</h2><p>${personaData.resume}</p>
-    <h2>Job Description:</h2><p>${personaData.job}</p>
-    <h2>Tones:</h2><p>${personaData.tones.join(', ')}</p>
-  `;
-} else {
-  document.getElementById('output').innerHTML = `<p>No persona data found. Please go back and fill the form.</p>`;
-}
+  if (window.SpeechRecognition) {
+    const recognition = new window.SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.start();
+
+    recognition.onresult = function(event) {
+      const lastResultIndex = event.results.length - 1;
+      const transcript = event.results[lastResultIndex][0].transcript.trim();
+
+      console.log('Heard:', transcript);
+
+      // Basic logic to detect likely questions
+      if (transcript.endsWith("?") || transcript.toLowerCase().includes("tell me") || transcript.toLowerCase().includes("how would you")) {
+        suggestAnswer(transcript);
+      }
+    };
+
+    recognition.onerror = function(event) {
+      console.error('Recognition error:', event.error);
+    };
+
+    function suggestAnswer(questionText) {
+      const resume = localStorage.getItem('resume') || '';
+      const jobDescription = localStorage.getItem('jobDescription') || '';
+      const tone = localStorage.getItem('tone') || '';
+      const customInstructions = localStorage.getItem('customInstructions') || '';
+
+      const generatedAnswer = `
+        <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #444; border-radius: 8px;">
+          <strong>Question:</strong> ${questionText}<br><br>
+          <strong>Suggested Answer:</strong> Based on your background in ${resume.slice(0, 100)}..., and considering the role (${jobDescription.slice(0, 100)}...), respond confidently with a tone of ${tone} as instructed (${customInstructions.slice(0, 100)}...).
+        </div>
+      `;
+
+      document.getElementById('suggestions').innerHTML += generatedAnswer;
+    }
+
+  } else {
+    document.getElementById('suggestions').innerHTML = "<p>Speech Recognition not supported in this browser. Try Chrome or Edge.</p>";
+  }
 </script>
-
-</body>
-</html>
