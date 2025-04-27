@@ -1,86 +1,34 @@
-
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      overflow-y: auto;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      color: #ffcc00;
-      margin-bottom: 30px;
-    }
-
-    h3 {
-      font-size: 1.5em;
-      margin: 15px 0;
-    }
-
-    button {
-      background-color: #ffcc00;
-      color: #121212;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1em;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s ease, transform 0.2s;
-      margin: 10px;
-    }
-
-    button:hover {
-      background-color: #e6b800;
-      transform: scale(1.05);
-    }
-
-    input[type="file"] {
-      background-color: #444444;
-      color: #ffffff;
-      padding: 10px;
-      border: 1px solid #ffcc00;
-      border-radius: 5px;
-      margin: 10px 0;
-    }
-
-    label {
-      font-size: 1.2em;
-      margin: 10px 0;
-    }
-
-    .checkbox-group {
-      text-align: left;
-      margin-top: 20px;
-      padding-left: 20px;
-    }
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>QuickPitch.AI</title>
+  <title>QuickPitch.AI - Interview Assistant</title>
   <style>
     body {
       background-color: #121212;
       color: #ffffff;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       padding: 20px;
     }
-    h1, h2, label {
-      color: #ffffff;
+    h1, h2 {
+      color: #00bcd4;
     }
     select, textarea, button {
       width: 100%;
       margin-top: 10px;
       margin-bottom: 20px;
-      padding: 10px;
+      padding: 12px;
       border-radius: 5px;
       border: none;
       font-size: 16px;
     }
     button {
       background-color: #00bcd4;
-      color: #ffffff;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s;
     }
     button:hover {
       background-color: #0097a7;
@@ -100,225 +48,57 @@
 </head>
 <body>
 
-  <h1>QuickPitch.AI Interview Assistant</h1>
+  <h1>QuickPitch.AI Interview Setup</h1>
 
-  <h2>Select the Role You're Interviewing For:</h2>
-  <select id="roleSelect">
+  <h2>Choose Interview Role</h2>
+  <select id="role">
     <option value="Alliances/Partnership Role">Alliances/Partnership Role</option>
     <option value="Sales Executive">Sales Executive</option>
     <option value="Marketing Role">Marketing Role</option>
   </select>
 
-  <h2>Upload Resume:</h2>
-  <textarea id="resumeInput" placeholder="Paste your resume here..."></textarea>
+  <h2>Paste Your Resume</h2>
+  <textarea id="resume" rows="8" placeholder="Paste your resume here..."></textarea>
 
-  <h2>Upload Job Description:</h2>
-  <textarea id="jobDescriptionInput" placeholder="Paste the job description here..."></textarea>
+  <h2>Paste Job Description</h2>
+  <textarea id="job" rows="8" placeholder="Paste the job description here..."></textarea>
 
-  <h2>Select Interview Tone and Style (Multiple):</h2>
-  <select id="toneSelect" multiple>
+  <h2>Choose Tone (Multiple Allowed)</h2>
+  <select id="tone" multiple>
     <option value="Professional & Sharp">Professional & Sharp</option>
     <option value="Friendly & Conversational">Friendly & Conversational</option>
     <option value="Authoritative & Confident">Authoritative & Confident</option>
     <option value="Humble & Collaborative">Humble & Collaborative</option>
-    <option value="Humanized, not robotic">Humanized, not robotic</option>
-    <option value="Industry Expert">Industry Expert (Alliances, Growth Strategy, Scaling Partnerships)</option>
-    <option value="Subtle, Smart Humor">Subtle, Smart Humor</option>
+    <option value="Industry Expert">Industry Expert</option>
+    <option value="Subtle Humor">Subtle Humor</option>
   </select>
 
-  <button id="generateButton">Generate Interview Persona</button>
+  <button id="generatePersona">Generate Interview Persona</button>
 
   <div class="footer">
     <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
   </div>
 
-  <script>
-    // Save data to localStorage and move to persona.html
-    document.getElementById("generateButton").addEventListener("click", function() {
-      const role = document.getElementById("roleSelect").value;
-      const toneOptions = document.getElementById("toneSelect");
-      const selectedTones = Array.from(toneOptions.selectedOptions).map(option => option.value);
-      const resume = document.getElementById("resumeInput").value;
-      const jobDescription = document.getElementById("jobDescriptionInput").value;
+<script>
+document.getElementById('generatePersona').addEventListener('click', function() {
+  const role = document.getElementById('role').value;
+  const resume = document.getElementById('resume').value;
+  const job = document.getElementById('job').value;
+  const toneElements = document.getElementById('tone').selectedOptions;
+  const tones = Array.from(toneElements).map(option => option.value);
 
-      const interviewData = {
-        role: role,
-        tone: selectedTones,
-        resume: resume,
-        jobDescription: jobDescription
-      };
+  const data = {
+    role,
+    resume,
+    job,
+    tones
+  };
 
-      localStorage.setItem('interviewData', JSON.stringify(interviewData));
-
-      window.location.href = "persona.html";
-    });
-  </script>
-
-</body>
-</html>
-    .checkbox-group label {
-      font-size: 1em;
-      display: block;
-      margin: 5px 0;
-    }
-
-    .selected-info {
-      margin-top: 20px;
-      font-size: 1.2em;
-      color: #ffcc00;
-    }
-
-    #selected-role, #selected-tone {
-      font-size: 1.2em;
-      color: #ffcc00;
-    }
-
-    #selected-role, #selected-tone {
-      margin-top: 10px;
-    }
-
-    .generate-btn {
-      background-color: #28a745;
-      margin-top: 30px;
-      font-size: 1.5em;
-      padding: 15px 30px;
-      border-radius: 10px;
-      transition: background-color 0.3s ease, transform 0.2s;
-    }
-
-    .generate-btn:hover {
-      background-color: #218838;
-      transform: scale(1.05);
-    }
-
-    .container {
-      width: 80%;
-      max-width: 800px;
-    }
-
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      font-size: 1em;
-      color: #aaaaaa;
-      background-color: #121212;
-      padding: 10px 0;
-      text-align: center;
-    }
-
-    footer a {
-      color: #ffcc00;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>QuickPitch.AI Interview Assistant</h1>
-
-    <!-- Role Selection -->
-    <h3>Select the role you're interviewing for:</h3>
-    <button onclick="setRole('Alliances/Partnership Role')">Alliances/Partnership Role</button>
-    <button onclick="setRole('Sales Executive')">Sales Executive</button>
-    <button onclick="setRole('Marketing')">Marketing</button>
-    <p id="selected-role">Selected Role: None</p>
-
-    <!-- Upload Resume and Job Description -->
-    <h3>Upload Your Resume and Job Description</h3>
-    <input type="file" id="resume-file" accept=".pdf, .docx, .txt">
-    <input type="file" id="job-description-file" accept=".pdf, .docx, .txt">
-
-    <!-- Tone & Format Selection (Multiple Checkboxes) -->
-    <h3>Select Interview Tone and Style:</h3>
-    <div class="checkbox-group">
-      <label>
-        <input type="checkbox" value="Professional & Sharp" onchange="updateTone()"> Professional & Sharp
-      </label>
-      <label>
-        <input type="checkbox" value="Friendly & Conversational" onchange="updateTone()"> Friendly & Conversational
-      </label>
-      <label>
-        <input type="checkbox" value="Authoritative & Confident" onchange="updateTone()"> Authoritative & Confident
-      </label>
-      <label>
-        <input type="checkbox" value="Humble & Collaborative" onchange="updateTone()"> Humble & Collaborative
-      </label>
-      <label>
-        <input type="checkbox" value="Humanized, not robotic" onchange="updateTone()"> Humanized, not robotic
-      </label>
-      <label>
-        <input type="checkbox" value="Industry Expert (Alliance Management)" onchange="updateTone()"> Industry Expert (Alliance Management)
-      </label>
-      <label>
-        <input type="checkbox" value="Subtle, smart humor" onchange="updateTone()"> Subtle, smart humor
-      </label>
-    </div>
-    <p id="selected-tone">Selected Tone(s): None</p>
-
-    <!-- Generate Interview Persona Button -->
-    <button class="generate-btn" onclick="generatePersona()">Generate Interview Persona</button>
-  </div>
-
-  <footer>
-    <p>Powered by QuickPitch.AI | <a href="#" style="color: #ffcc00;">Privacy Policy</a> | <a href="#" style="color: #ffcc00;">Terms of Service</a></p>
-  </footer>
-
-  <script>
-    let selectedRole = "";
-    let selectedTone = [];
-    let resumeFile = null;
-    let jobDescriptionFile = null;
-
-    // Function to set the selected role
-    function setRole(role) {
-      selectedRole = role;
-      document.getElementById('selected-role').innerText = "Selected Role: " + role;
-    }
-
-    // Function to update the selected tone(s)
-    function updateTone() {
-      selectedTone = [];
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-      checkboxes.forEach(checkbox => {
-        selectedTone.push(checkbox.value);
-      });
-      document.getElementById('selected-tone').innerText = "Selected Tone(s): " + (selectedTone.length ? selectedTone.join(', ') : "None");
-    }
-
-    // Function to generate Interview Persona and navigate to persona page
-    <button id="generateButton">Generate Interview Persona</button>
-      }
-
-      const personaData = {
-        role: selectedRole,
-        tone: selectedTone.join(', '),
-        resume: resumeFile ? resumeFile.name : "Not Uploaded",
-        job_description: jobDescriptionFile ? jobDescriptionFile.name : "Not Uploaded"
-      };
-
-      // Save persona data to localStorage
-      localStorage.setItem('personaData', JSON.stringify(personaData));
-
-      // Redirect to persona page
-      window.location.href = 'persona.html';
-    }
-
-    // Handle file uploads
-    document.getElementById('resume-file').addEventListener('change', function(event) {
-      resumeFile = event.target.files[0];
-    });
-
-    document.getElementById('job-description-file').addEventListener('change', function(event) {
-      jobDescriptionFile = event.target.files[0];
-    });
-  </script>
-</body>
-</html>
-document.getElementById("generateButton").addEventListener("click", function() {
-  // Save selections to localStorage first (role, tone, resume, job description)
-  // ...
-
-  // Then move to persona page
-  window.location.href = "persona.html";
+  localStorage.setItem('personaData', JSON.stringify(data));
+  window.location.href = 'persona.html';
 });
+</script>
+      
+
+</body>
+</html>
